@@ -114,7 +114,7 @@ export default function Index() {
                                 </div>
                             </div>
                             <div className="max-w-3xl px-6 text-center text-base text-gray-600 dark:text-gray-400 md:text-xl">
-                                Stellen deine Frage zum neuen Rahmenabkommen zwischen der
+                                Stelle deine Frage zum neuen Rahmenabkommen zwischen der
                                 Schweiz und der EU. Die Antworten sind sachlich, neutral und
                                 basieren ausschliesslich auf den offiziellen Verträgen – ohne
                                 Meinungen, Bewertungen oder Spekulationen.
