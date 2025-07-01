@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.services.chat_service import get_or_create_chain, save_to_db, format_with_footnotes
+from app.services.chat_service import get_or_create_chain, save_to_db, format_with_footnotes, detect_language
 
 ask_bp = Blueprint('ask', __name__)
 
@@ -13,8 +13,10 @@ def ask():
     if not question:
         return jsonify({"error": "Bitte gib eine Frage an."}), 400
 
+    language = detect_language(question).upper()
+
     session_id, conv = get_or_create_chain(session_id)
-    resp = conv({"question": question})
+    resp = conv({"question": question, "language": language})
     raw_answer = resp.get("answer", "")
     
     # Extract unique sources from documents
