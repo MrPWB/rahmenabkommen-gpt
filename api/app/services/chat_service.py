@@ -3,6 +3,7 @@ from typing import Optional, Dict, Tuple, List
 from uuid import uuid4
 from datetime import datetime, timezone
 from collections import OrderedDict
+from langdetect import detect, LangDetectException
 
 from app.models import Conversation, Message
 from app.extensions import db
@@ -99,11 +100,12 @@ def get_or_create_chain(session_id: Optional[str]) -> Tuple[str, ConversationalR
             template="Vertragstext:\n{page_content}\n\nQuelle: {source}"
         )
 
-        final_prompt = PromptTemplate.from_template(
-            """
+        final_prompt = PromptTemplate(
+            input_variables=["language", "question", "context"],
+            template="""
                 Beantworte die Frage so präzise wie möglich anhand des Kontextes.
                 Verwende pro Quelle einen Index und füge diese direkt nach der ersten Verwendung an in diesem Format: [1], [2], ... 
-                Ergänze die Antwort niemals mit einer Fussnote. 
+                Antworte zwingend in der angegebenen Sprache: {language}.
 
                 Frage: {question}
 
@@ -137,7 +139,6 @@ def get_or_create_chain(session_id: Optional[str]) -> Tuple[str, ConversationalR
             return_source_documents=True,
         )
         sessions[session_id] = conv
-    print(sessions[session_id].memory.load_memory_variables({"question": "Platzhalter?"})["chat_history"])
     return session_id, sessions[session_id]
 
 
@@ -177,3 +178,14 @@ def format_with_footnotes(answer: str, source_docs: List[Document]) -> Tuple[str
     cleaned_answer = tmp.strip()
 
     return cleaned_answer, sources
+
+
+def detect_language(text: str) -> str:
+    """Erkennt die Sprache des Textes (de/fr/it/en)"""
+    try:
+        lang = detect(text)
+        if lang in ['de', 'fr', 'it', 'en']:
+            return lang
+    except LangDetectException:
+        pass
+    return 'de'  # Default
