@@ -155,7 +155,10 @@ export default function Index() {
       {conversation.length > 0 && (
         <div>
           <Header
-            navigateHome={() => setConversation([])}
+            navigateHome={() => {
+              setConversation([]);
+              setConversationSessionId(undefined);
+            }}
             hideThemeToggleOnMobile={true}
           >
             <button
