@@ -16,7 +16,7 @@ export default function Help() {
 
                 <p className="mb-4">
                     Die Anwendung basiert{' '}
-                    <strong>ausschließlich auf dem offiziellen Vertragstext</strong> und
+                    <strong>ausschliesslich auf dem offiziellen Vertragstext</strong> und
                     hilft dabei, die über <strong>1900 Seiten</strong> besser zu verstehen
                     – indem sie strukturierte, verständliche Antworten auf Fragen zum
                     Inhalt liefert.
