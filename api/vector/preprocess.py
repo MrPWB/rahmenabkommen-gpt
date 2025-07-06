@@ -1,7 +1,6 @@
 import os
-import time
+import re
 import fitz
-import subprocess
 from pathlib import Path
 from bs4 import BeautifulSoup
 from langchain.text_splitter import CharacterTextSplitter
@@ -17,7 +16,7 @@ PDF_DIR = "./app/data/pdfs"
 HTML_DIR = "../ui/public/contracts"
 FAISS_INDEX_PATH = "./app/data/vectorstore_index"
 
-def pdf_to_html(pdf_path, out_dir):
+def pdf_to_html(html_title, pdf_path, html_path, out_dir):
     """
     Liest ein PDF mit PyMuPDF, erkennt anhand der font_size Überschriften vs. Fließtext
     und schreibt ein HTML-Dokument mit <h1>, <h2> und <p> Elementen.
@@ -25,7 +24,7 @@ def pdf_to_html(pdf_path, out_dir):
     doc = fitz.open(pdf_path)
     html = BeautifulSoup(
         f"<!DOCTYPE html><html><head>"
-        f"<meta charset='utf-8'><title>{Path(pdf_path).stem}</title>"
+        f"<meta charset='utf-8'><title>{html_title}</title>"
         f"<link rel='stylesheet' href='{BASE_URL}/static.css'>"
         "</head><body></body></html>",
         "html.parser"
@@ -73,7 +72,7 @@ def pdf_to_html(pdf_path, out_dir):
                     body.append(tag)
 
     # Schreibe die Datei
-    out_path = os.path.join(out_dir, f"{Path(pdf_path).stem}.html")
+    out_path = os.path.join(out_dir, html_path)
     os.makedirs(out_dir, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(str(html))
@@ -106,7 +105,30 @@ def get_chunk_positions(text, chunks, overlap=200):
             pos = start
     return positions
 
+def make_html_path(filename):
+    # Entferne Verzeichnispfade
+    name = os.path.basename(filename)
+    # Trenne Namen und Extension
+    base, ext = os.path.splitext(name)
+    # Grundsätzlich unerlaubte Zeichen entfernen
+    base = re.sub(r'[\\/:"*?<>|]+', '', base)
+    # Entferne alle Punkte und Kommas im Basisnamen
+    base = base.replace('.', '').replace(',', '')
+    # Spaces durch Unterstriche ersetzen
+    base = re.sub(r'\s+', '_', base)
+    # Optional: führende und folgende Unterstriche entfernen
+    base = base.strip('_')
+    return base + ".html"
+
+def make_html_title(filename: str) -> str:
+    name = os.path.basename(filename)
+    base, ext = os.path.splitext(name)
+    base = re.sub(r'[\\/:"*?<>|]+', '', base)
+    base = base.strip('_')
+    return base
+
 def build_and_save_vectorstore(pdf_dir, html_dir, output_path):
+
     pdf_paths = [os.path.join(pdf_dir, f) for f in os.listdir(pdf_dir) if f.endswith(".pdf")]
     print(f"PDFs gefunden: {len(pdf_paths)}")
     
@@ -120,8 +142,12 @@ def build_and_save_vectorstore(pdf_dir, html_dir, output_path):
         print(f"Verarbeite PDF: {os.path.basename(pdf_path)}")
         print(f"{'='*50}\n")
         
+        # HTML Dateiname und Titel erzeugen
+        html_title = make_html_title(pdf_path)
+        html_path = make_html_path(pdf_path)
+
         # PDF in HTML umwandeln
-        soup = pdf_to_html(pdf_path, html_dir)
+        soup = pdf_to_html(html_title, pdf_path, html_path, html_dir)
         
         # Text extrahieren und Mapping erstellen
         text, mapping = extract_text_with_mapping(soup)
@@ -144,7 +170,7 @@ def build_and_save_vectorstore(pdf_dir, html_dir, output_path):
         for chunk, start_pos in zip(chunks, positions):
             for map_start, map_end, element_id in mapping:
                 if map_start <= start_pos < map_end:
-                    metadata = {"source": f"{BASE_URL}/contracts/{Path(pdf_path).stem}.html#{element_id}"}
+                    metadata = {"source": f"{BASE_URL}/contracts/{html_path}#{element_id}"}
                     all_chunk_texts.append(chunk)
                     all_metadatas.append(metadata)
                     break
