@@ -14,7 +14,7 @@ def sanitize_filename(name: str) -> str:
         name = "download"
     return name + ".pdf"
 
-def get_download_links_and_titles(page, target_categories=["Abkommen", "Innerstaatliche Umsetzung", "Erläuternder Bericht", "Faktenblätter und FAQ"]):
+def get_download_links_and_titles(page, target_categories=["Abkommen", "Innerstaatliche Umsetzung", "Erläuternder Bericht", "Faktenblätter und FAQ", "Übersicht EU-Gesetzgebungsakte Paket Schweiz-EU"]):
     # Warte, bis die Download-Items geladen sind
     page.wait_for_selector("a.download-item")
     
