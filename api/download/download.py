@@ -14,36 +14,50 @@ def sanitize_filename(name: str) -> str:
         name = "download"
     return name + ".pdf"
 
-def get_download_links_and_titles(page):
+def get_download_links_and_titles(page, target_categories=["Abkommen", "Innerstaatliche Umsetzung", "Erläuternder Bericht", "Faktenblätter und FAQ"]):
+    # Warte, bis die Download-Items geladen sind
     page.wait_for_selector("a.download-item")
-    items = page.query_selector_all("a.download-item")
+    
+    # Hole alle h2-Elemente und Download-Items
+    elements = page.query_selector_all("h2, ul.accordion a.download-item, div.container__aside a.download-item")
+    
     result = []
-    for idx, el in enumerate(items):
-        href = el.get_attribute("href")
-        title_el = el.query_selector("h4.download-item__title")
-        if title_el:
-            title = title_el.inner_text().strip()
-            if not title:
-                print(f"Warnung: Leerer Titel bei Link #{idx} ({href})")
-                title = None
-        else:
-            print(f"Warnung: Kein Titel-Element bei Link #{idx} ({href})")
-            title = None
+    current_category = None
+    
+    for idx, el in enumerate(elements):
+        # Prüfe, ob das Element ein h2 ist (Kategorie)
+        if el.evaluate("el => el.tagName.toLowerCase() === 'h2'"):
+            current_category = el.inner_text().strip()
+            continue
         
-        # Falls kein Titel, versuchen wir, den Dateinamen aus dem Download-Attribut zu holen
-        if not title:
-            download_attr = el.get_attribute("download")
-            if download_attr:
-                # Entferne Dateiendung und benutze den Namen
-                title = os.path.splitext(download_attr)[0]
-                print(f"Fallback Titel aus 'download'-Attribut: {title}")
+        # Nur Download-Items aus den Zielkategorien verarbeiten
+        if current_category in target_categories:
+            href = el.get_attribute("href")
+            title_el = el.query_selector("h4.download-item__title")
+            
+            if title_el:
+                title = title_el.inner_text().strip()
+                if not title:
+                    print(f"Warnung: Leerer Titel bei Link #{idx} in Kategorie '{current_category}' ({href})")
+                    title = None
             else:
-                title = f"download_{idx}"
-                print(f"Fallback Titel generiert: {title}")
-        
-        result.append((title, href))
-    return result
+                print(f"Warnung: Kein Titel-Element bei Link #{idx} in Kategorie '{current_category}' ({href})")
+                title = None
+            
+            # Fallback für Titel, falls keiner vorhanden
+            if not title:
+                download_attr = el.get_attribute("download")
+                if download_attr:
+                    title = os.path.splitext(download_attr)[0]
+                    print(f"Fallback Titel aus 'download'-Attribut: {title}")
+                else:
+                    title = f"download_{len(result)}"
 
+                    print(f"Fallback Titel generiert: {title}")
+            
+            result.append((title, href))
+    
+    return result
 def download_file(url, filename):
     print(f"Downloading {url} as {filename}")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
