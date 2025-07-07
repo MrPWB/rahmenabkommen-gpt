@@ -4,7 +4,7 @@ export default function Help() {
     return (
         <div className="min-h-screen w-full">
             <Header />
-            <section className="mx-auto max-w-3xl px-4 pb-8 pt-20 mt-8 font-sans leading-relaxed">
+            <section className="mx-auto mt-8 max-w-3xl px-4 pb-8 pt-20 font-sans leading-relaxed">
                 <h1 className="mb-6 text-3xl font-bold">Über Rahmenabkommen GPT</h1>
 
                 <p className="mb-4">
@@ -19,7 +19,14 @@ export default function Help() {
                     <strong>ausschliesslich auf dem offiziellen Vertragstext</strong> und
                     hilft dabei, die über <strong>1900 Seiten</strong> besser zu verstehen
                     – indem sie strukturierte, verständliche Antworten auf Fragen zum
-                    Inhalt liefert.
+                    Inhalt liefert. Rahmenabkommen GPT ist die uns einzig bekannte Lösung,
+                    welche direkt auf den Vertragstext refernziert. Die Quellen sind dabei{' '}
+                    <a
+                        href="https://www.europa.eda.admin.ch/de/vernehmlassung-paket-schweiz-eu"
+                        className="underline"
+                    >
+                        die veröffentlichen Dokumente des EDA
+                    </a>
                 </p>
 
                 <p className="mb-4">
@@ -69,7 +76,7 @@ export default function Help() {
                                     alt="X Icon für Nicola Richli"
                                     className="h-5 w-5 dark:invert"
                                 />
-                                Nicola Richli
+                                Nicola Richli (Projektleitung)
                             </a>
                         </div>
                         <div className="flex items-center space-x-3">
