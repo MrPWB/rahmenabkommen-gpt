@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 
 load_dotenv()  # .env laden
 
-BASE_URL = "https://rahmenabkommen-gpt.ch"  # Fallback-URL
 PDF_DIR = "./app/data/pdfs"
 HTML_DIR = "../ui/public/contracts"
 FAISS_INDEX_PATH = "./app/data/vectorstore_index"
@@ -25,8 +24,8 @@ def pdf_to_html(html_title, pdf_path, html_path, out_dir):
     html = BeautifulSoup(
         f"<!DOCTYPE html><html><head>"
         f"<meta charset='utf-8'><title>{html_title}</title>"
-        f"<link rel='stylesheet' href='{BASE_URL}/static.css'>"
-        "</head><body style='background-color: rgb(243 244 246);'></body></html>",
+        f"<link rel='stylesheet' href='/static.css'>"
+        "</head><body></body></html>",
         "html.parser"
     )    
 
@@ -196,7 +195,7 @@ def build_and_save_vectorstore(pdf_dir, html_dir, output_path):
         for chunk, start_pos in zip(chunks, positions):
             for map_start, map_end, element_id in mapping:
                 if map_start <= start_pos < map_end:
-                    metadata = {"source": f"{BASE_URL}/contracts/{html_path}#{element_id}"}
+                    metadata = {"source": f"/contracts/{html_path}#{element_id}"}
                     all_chunk_texts.append(chunk)
                     all_metadatas.append(metadata)
                     break

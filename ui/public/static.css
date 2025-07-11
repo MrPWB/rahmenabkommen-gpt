@@ -88,9 +88,9 @@ code {
   color: rgb(31, 41, 55);
   padding: 0.5rem;
   border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header > .help-button:hover {
@@ -115,5 +115,16 @@ code {
 
   code {
     background-color: #333;
+  }
+
+  .header {
+    background-color: #030712;
+    .logo {
+      color: #eee;
+    }
+  }
+
+  .header > .help-button {
+    color: #eee;
   }
 }
