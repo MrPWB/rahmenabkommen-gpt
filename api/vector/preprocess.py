@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # .env laden
 
-BASE_URL = os.getenv("BASE_URL", "https://rahmenabkommen-gpt.ch")  # Fallback-URL
+BASE_URL = "https://rahmenabkommen-gpt.ch"  # Fallback-URL
 PDF_DIR = "./app/data/pdfs"
 HTML_DIR = "../ui/public/contracts"
 FAISS_INDEX_PATH = "./app/data/vectorstore_index"
