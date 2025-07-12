@@ -106,6 +106,8 @@ def get_or_create_chain(session_id: Optional[str]) -> Tuple[str, ConversationalR
                 Beantworte die Frage so präzise wie möglich anhand des Kontextes.
                 Verwende pro Quelle einen Index und füge diese direkt nach der ersten Verwendung an in diesem Format: [1], [2], ... 
                 Antworte zwingend in der angegebenen Sprache: {language}.
+                Benutze nicht das scharfe S, sondern immer "ss" (z.B. "Schweiss").
+                Füge niemals die Quellenangababe am Ende der Antwort an, sondern nur direkt im Text.
 
                 Frage: {question}
 
