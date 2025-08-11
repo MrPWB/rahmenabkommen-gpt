@@ -10,5 +10,5 @@ vectorstore = FAISS.load_local(
     allow_dangerous_deserialization=True
 )
 
-llm = ChatOpenAI(model="gpt-4.1-mini")
+llm = ChatOpenAI(model="gpt-5-mini", temperature=1)
 
