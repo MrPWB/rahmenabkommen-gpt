@@ -22,7 +22,6 @@ dataclasses-json==0.6.7
 distro==1.9.0
 djlint==1.36.4
 EditorConfig==0.17.1
-faiss-cpu==1.11.0
 fastapi==0.115.12
 filelock==3.18.0
 Flask==3.1.1
